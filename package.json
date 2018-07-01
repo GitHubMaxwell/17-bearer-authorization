@@ -1,0 +1,38 @@
+{
+  "name": "17-bearer-authorization",
+  "version": "1.0.0",
+  "description": "![CF](https://camo.githubusercontent.com/70edab54bba80edb7493cad3135e9606781cbb6b/687474703a2f2f692e696d6775722e636f6d2f377635415363382e706e67) 17: Bearer Auth ===",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GitHubMaxwell/17-bearer-authorization.git"
+  },
+  "author": "maxwell rediker",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GitHubMaxwell/17-bearer-authorization/issues"
+  },
+  "homepage": "https://github.com/GitHubMaxwell/17-bearer-authorization#readme",
+  "dependencies": {
+    "babel-env": "^2.4.1",
+    "babel-eslint": "^8.2.5",
+    "babel-register": "^6.26.0",
+    "bcrypt": "^2.0.1",
+    "cors": "^2.8.4",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "eslint": "^4.19.1",
+    "jest": "^23.2.0",
+    "jsonwebtoken": "^8.3.0",
+    "mockgoose": "^7.3.5",
+    "mockgoose-fix": "^7.3.6",
+    "mongodb": "^3.1.0",
+    "mongoose": "^5.1.7",
+    "require-dir": "^1.0.0",
+    "superagent": "^3.8.3",
+    "supertest": "^3.1.0"
+  }
+}
