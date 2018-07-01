@@ -6,8 +6,8 @@
 
 ## Links
 
-* TRAVIS:
-* HEROKU:
+* TRAVIS: https://travis-ci.com/GitHubMaxwell/17-bearer-authorization
+* HEROKU: https://lab17-max.herokuapp.com/
 * GitHUB PR:
 
 ## Steps
