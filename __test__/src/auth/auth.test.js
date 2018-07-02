@@ -51,7 +51,7 @@ describe('Authentication Server', () => {
     return mockRequest.get('/api/signin')
       .auth()
       .then(response => {
-        console.log('THEN');
+        // console.log('THEN');
         // why is this going to the then
         expect(response.status).toEqual(401);
       });
@@ -73,7 +73,7 @@ describe('Authentication Server', () => {
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell'})
       .then(response => {
-        console.log('200 POST RES:', response.body);
+        // console.log('200 POST RES:', response.body);
         return mockRequest.get('/api/signin')
           .auth('khoa','khoawell')
           .then(res => {

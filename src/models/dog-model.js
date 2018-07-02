@@ -19,13 +19,13 @@ const dogSchema = new mongoose.Schema({
 });
 
 dogSchema.pre('save', function(next) {
-  console.log('dogModel PRE SAVE');
+  // console.log('dogModel PRE SAVE');
   this.userId = this._id;
 
   bcrypt.hash(this.password,10)
     .then( hashedPassword => {
       this.password = hashedPassword;
-      console.log('Password hashed and on to next()');
+      // console.log('Password hashed and on to next()');
       next();
     })
     .catch( error => error );
@@ -34,7 +34,7 @@ dogSchema.pre('save', function(next) {
 });
 
 dogSchema.statics.authenticate = function(auth) {
-  console.log('dogModel Authenticate', auth.username);
+  // console.log('dogModel Authenticate', auth.username);
   let query = {username:auth.username};
   return this.findOne(query)
     .then(user => user && user.comparePassword(auth.password))
@@ -46,12 +46,12 @@ dogSchema.statics.authenticate = function(auth) {
 
 dogSchema.statics.authorize = function(token) {
   let parsedToken = jwt.verify(token, process.env.APP_SECRET || 'changeit');
-  console.log('Authorize user parsed token: ', parsedToken);
+  // console.log('Authorize user parsed token: ', parsedToken);
 
   let query = {_id:parsedToken.id};
   return this.findOne(query)
     .then(user => {
-      console.log('Authorize user: ', user);
+      // console.log('Authorize user: ', user);
       return user;
     })
     .catch( error => error );
@@ -60,8 +60,8 @@ dogSchema.statics.authorize = function(token) {
 };
 
 dogSchema.methods.update = function(userId, payload) {
-  console.log('Update user userId: ', userId);
-  console.log('Update user payload: ', payload);
+  // console.log('Update user userId: ', userId);
+  // console.log('Update user payload: ', payload);
 
 
   // let query = {userId:payload.id};

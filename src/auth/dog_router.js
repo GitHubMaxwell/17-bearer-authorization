@@ -21,7 +21,7 @@ authRouter.post('/api/signup', (req,res,next) => {
   let user = new DogModel(req.body);
   user.save()
     .then( user => {
-      console.log('USER from POST route:', user);
+      // console.log('USER from POST route:', user);
       //this returns back NOT the user but the JWT (generateToken)
       return res.send(user.generateToken());
     })
@@ -39,7 +39,7 @@ authRouter.post('/api/special', (req,res,next) => {
   let user = new DogModel(req.body);
   user.save()
     .then( user => {
-      console.log('USER from SPECIAL POST route:', user.userId);
+      // console.log('USER from SPECIAL POST route:', user.userId);
 
       // let userToken = user.generateToken();
       // async problems? by putting the user.generateToken in the array its not waiting for it to complete?
@@ -55,7 +55,7 @@ authRouter.post('/api/special', (req,res,next) => {
 
 authRouter.get('/api/signin', auth, (req,res) => {
   res.cookie('Token', req.token);
-  console.log('REQ TOKEN from get route: ', req.token);
+  // console.log('REQ TOKEN from get route: ', req.token);
 
   // why is res.cookie a function???
   // console.log('REQ COOKIE from get route: ', res.cookie);
@@ -73,7 +73,7 @@ authRouter.get('/api/signin/:id', auth, (req,res) => {
 
 // pass data as stringifed JSON in the body of a put request to update a resource
 authRouter.put('/api/update/:id', auth, (req,res) => {
-  console.log('GET PAST auth in PUT');
+  // console.log('GET PAST auth in PUT');
   if(!req.params) {
     res.statusCode = 404;
     res.statusMessage = 'No ID Entered';

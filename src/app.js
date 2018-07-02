@@ -4,6 +4,7 @@ import cors from 'cors';
 import dogRouter from './auth/dog_router.js';
 import errorHandler from './middleware/error.js';
 import notFound from './middleware/404.js';
+require('dotenv').config();
 
 let app = express();
 
