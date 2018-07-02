@@ -88,12 +88,11 @@ authRouter.put('/api/update/:id', auth, (req,res) => {
 
 //pass the id of a resource though the url endpoint (using req.params) to delete a resource
 authRouter.delete('/api/delete/:id', auth, (req,res) => {
-  if(!req.params) {
-    badReq();
-  }
-
-
-  res.send();
+  // if(!req.params) {
+  //   console.log('DIDNT GIVE ID');
+  //   // badReq();
+  // }
+  res.send('DELETE SUCCESS USER: ');
 });
 
 ///////////////////////////////// end routes

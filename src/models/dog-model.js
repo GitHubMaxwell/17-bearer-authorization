@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, {Schema} from 'mongoose';
 // import mongoose, {Schema} from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -13,9 +13,10 @@ const dogSchema = new mongoose.Schema({
   username: {type: String, required: true, unique: true},
   password: {type: String, required: true},
   dog: {type: String},
-  userId: {type: String},
-  // userId has to go here???
-  // type String? doestn work with type number
+  // userId: {type: String},
+  userId: {type: Schema.Types.ObjectId},
+  // userId has to go here??? but assigned in the PRE / best practice?
+  // type String? doesnt work with type: Number
 });
 
 dogSchema.pre('save', function(next) {
@@ -51,7 +52,7 @@ dogSchema.statics.authorize = function(token) {
   let query = {_id:parsedToken.id};
   return this.findOne(query)
     .then(user => {
-      // console.log('Authorize user: ', user);
+      console.log('Authorize user: ', user);
       return user;
     })
     .catch( error => error );
@@ -68,6 +69,26 @@ dogSchema.methods.update = function(userId, payload) {
   // let query = {_id:payload.id};
   let query = {_id:userId};
   return this.findByIdAndUpdate(query, payload)
+    .then(user => {
+      return user;
+    })
+    .catch( error => error );
+};
+
+dogSchema.methods.deleteOne = function(userId) {
+  console.log('DeleteOne user userId: ', userId);
+  let query = {_id:userId};
+  return this.findByIdAndDelete(query)
+    .then(user => {
+      console.log('DeleteOne inside THEN user: ', user);
+
+      return user;
+    })
+    .catch( error => error );
+};
+
+dogSchema.methods.deleteAll = function() {
+  return this.remove({})
     .then(user => {
       return user;
     })

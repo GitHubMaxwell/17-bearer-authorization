@@ -10,6 +10,8 @@ const mockRequest = supertest(server);
 const mockgoose = new Mockgoose(mongoose);
 require('dotenv').config();
 
+jest.setTimeout(60000);
+
 afterAll( () => {
   mongoose.connection.close();
 });
@@ -61,7 +63,7 @@ describe('Authentication Server', () => {
     //   });
   });
 
-  it('GET: gets a 404 on a bad login with wrong credentials', () => {
+  it('GET: gets a 404 on a good login with wrong credentials', () => {
     return mockRequest.get('/api/signin')
       .auth('foo','bar')
       .catch(response => {
