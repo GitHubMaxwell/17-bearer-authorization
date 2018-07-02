@@ -43,8 +43,8 @@ authRouter.post('/api/special', (req,res,next) => {
 
       // let userToken = user.generateToken();
       // async problems? by putting the user.generateToken in the array its not waiting for it to complete?
-      // return [user.userId, user.generateToken()];
-      return user.generateToken();
+      return [user.userId, user.generateToken()];
+      // return user.generateToken();
 
     })
     .catch( next );

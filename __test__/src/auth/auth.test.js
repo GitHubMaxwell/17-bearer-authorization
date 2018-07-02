@@ -8,6 +8,7 @@ import supertest from 'supertest';
 import {server} from '../../../src/app.js';
 const mockRequest = supertest(server);
 const mockgoose = new Mockgoose(mongoose);
+require('dotenv').config();
 
 afterAll( () => {
   mongoose.connection.close();
