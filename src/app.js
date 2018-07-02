@@ -1,5 +1,5 @@
 import express from 'express';
-import morgan from 'morgan';
+// import morgan from 'morgan';
 import cors from 'cors';
 import dogRouter from './auth/dog_router.js';
 import errorHandler from './middleware/error.js';
@@ -9,7 +9,7 @@ let app = express();
 
 /////////////////////////// middleware
 app.use(cors());
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 /////////////////////////// routes and error handling middleware
@@ -41,9 +41,9 @@ module.exports = {
       console.log('Server has been closed');
     });
   },
+  server: app,
 
   /*
-  server : app,
   ??? not in demo
   what does it do 
   import app from '../../src/app.js' in the auth.test.js from lab 16

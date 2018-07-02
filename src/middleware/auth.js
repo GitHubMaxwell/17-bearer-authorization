@@ -4,6 +4,29 @@ import User from '../models/dog-model.js';
 
 export default (req, res, next) => {
 
+  let update = (token, payload) => {
+    console.log('GETTING TO UPDATE');
+
+    User.authorize(token)
+      .then( user => {
+        console.log('Update user', user);
+
+        if(!user) {
+          console.log('Update No User');
+          getAuth();
+        }
+        else {
+          //is this the proper way to hand off the user.id
+          User.update(user.userId, payload);
+          console.log('Update going to Next', user);
+          next();
+        }
+      })
+      .catch(() => {
+        next();
+      });
+  };
+
   let authorize = (token) => {
     User.authorize(token)
       .then( user => {
@@ -12,6 +35,7 @@ export default (req, res, next) => {
           getAuth();
         }
         else {
+          console.log('Authorize going to Next', user);
           next();
         }
       })
@@ -21,9 +45,14 @@ export default (req, res, next) => {
   };
 
   let authenticate = (auth) => {
+    console.log('auth.js AUTHENTICATE');
+
     User.authenticate(auth)
       .then( user => {
+        // console.log('BEFORE IF User.authenticate', user);
+
         if(!user) {
+          console.log('auth.js authenticate NO USER ERROR', user);
           getAuth();
         }
         else {
@@ -32,11 +61,13 @@ export default (req, res, next) => {
         }
       })
       .catch(() => {
+        console.log('auth.js authenticate ERROR');
         next();
       });
   };
 
   let getAuth = () => {
+    console.log('auth.js getAuth');
     next({
       status:401,
       statusMessage: 'Unauthorized getAuth',
@@ -50,12 +81,17 @@ export default (req, res, next) => {
     let auth = {};
     let authHeader = req.headers.authorization;
     //can also be req.get.authorization
+    console.log('req.headers.authorization in TRY', authHeader);
+
     if(!authHeader) {
       console.log('No req.headers.authorization in TRY');
-      return getAuth;
+      return getAuth();
     }
+    console.log('auth.js BEFORE if');
 
     if(authHeader.match(/basic/i)){
+      console.log('auth.js BASIC if');
+
       let base64Header = authHeader.replace(/Basic\s+/i, '');
       let base64Buffer = Buffer.from(base64Header, 'base64');
       let bufferString = base64Buffer.toString();
@@ -65,12 +101,25 @@ export default (req, res, next) => {
     }
     /////////////////////////////////////////////
     else if(authHeader.match(/bearer/i)){
+      console.log('auth.js inside BEARER if');
+
       let token = authHeader.replace(/bearer\s+/i, '');
-      authorize(token);
+      console.log('auth.js BEARER token: ', token);
+
+      //how to filter this with other routes using it
+      // if the request doesnt have
+      // cant be body because if its a Basic
+      // if(!req.params) {
+      if(!req.body) {
+        authorize(token);
+      } else {
+        update(token, req.body);
+      }
     }
     /////////////////////////////////////////////
   }
   catch(e) {
+    console.log('auth.js TRY error catch');
     next(e);
   }
 };
