@@ -10,7 +10,7 @@ const mockRequest = supertest(server);
 const mockgoose = new Mockgoose(mongoose);
 require('dotenv').config();
 
-jest.setTimeout(60000);
+jest.setTimeout(50000);
 
 afterAll( () => {
   mongoose.connection.close();
@@ -20,7 +20,7 @@ describe('Authentication Server', () => {
 
   beforeAll( (done) => {
     mockgoose.prepareStorage().then(()=>{
-      mongoose.connect('mongodb://localhost:27017/lab-18-test').then(()=>{
+      mongoose.connect('mongodb://localhost:27017/lab-17-test').then(()=>{
         done();
       });
     });

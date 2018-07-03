@@ -3,6 +3,7 @@
 
 ## Travis Badge
 
+[![Build Status](https://travis-ci.com/GitHubMaxwell/17-bearer-authorization.svg?branch=max-lab17)](https://travis-ci.com/GitHubMaxwell/17-bearer-authorization)
 
 ## Links
 
