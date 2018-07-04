@@ -1,4 +1,4 @@
-import mongoose, {Schema} from 'mongoose';
+import mongoose from 'mongoose';
 // import mongoose, {Schema} from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -14,17 +14,17 @@ const dogSchema = new mongoose.Schema({
   password: {type: String, required: true},
   dog: {type: String},
   // userId: {type: String},
-  userId: {type: Schema.Types.ObjectId},
+  // userId: {type: Schema.Types.ObjectId},
   // userId has to go here??? but assigned in the PRE / best practice?
   // type String? doesnt work with type: Number
 });
 
 dogSchema.pre('save', function(next) {
-  // console.log('dogModel PRE SAVE');
-  this.userId = this._id;
+  // this.userId = this._id;
 
   bcrypt.hash(this.password,10)
     .then( hashedPassword => {
+      // console.log('hashedPassword: ', hashedPassword);
       this.password = hashedPassword;
       // console.log('Password hashed and on to next()');
       next();
@@ -35,7 +35,7 @@ dogSchema.pre('save', function(next) {
 });
 
 dogSchema.statics.authenticate = function(auth) {
-  // console.log('dogModel Authenticate', auth.username);
+  console.log('dogModel Authenticate', auth.username);
   let query = {username:auth.username};
   return this.findOne(query)
     .then(user => user && user.comparePassword(auth.password))
@@ -52,50 +52,12 @@ dogSchema.statics.authorize = function(token) {
   let query = {_id:parsedToken.id};
   return this.findOne(query)
     .then(user => {
-      console.log('Authorize user: ', user);
+      // console.log('Authorize user: ', user);
       return user;
     })
     .catch( error => error );
   //maybe need error passed in
   // console.log('Authorize ERROR');
-};
-
-dogSchema.methods.update = function(userId, payload) {
-  // console.log('Update user userId: ', userId);
-  // console.log('Update user payload: ', payload);
-
-
-  // let query = {userId:payload.id};
-  // let query = {_id:payload.id};
-  let query = {_id:userId};
-  return this.findByIdAndUpdate(query, payload)
-    .then(user => {
-      return user;
-    })
-    .catch( error => error );
-};
-
-dogSchema.methods.deleteOne = function(userId) {
-  console.log('DeleteOne user userId: ', userId);
-  // let query = {_id:userId};
-  let query = userId;
-
-  // just need the actual id value not object 
-  return this.findByIdAndDelete(query)
-    .then(user => {
-      console.log('DeleteOne inside THEN user: ', user);
-
-      return user;
-    })
-    .catch( error => error );
-};
-
-dogSchema.methods.deleteAll = function() {
-  return this.remove({})
-    .then(user => {
-      return user;
-    })
-    .catch( error => error );
 };
 
 dogSchema.methods.comparePassword = function(password) {
