@@ -77,7 +77,10 @@ dogSchema.methods.update = function(userId, payload) {
 
 dogSchema.methods.deleteOne = function(userId) {
   console.log('DeleteOne user userId: ', userId);
-  let query = {_id:userId};
+  // let query = {_id:userId};
+  let query = userId;
+
+  // just need the actual id value not object 
   return this.findByIdAndDelete(query)
     .then(user => {
       console.log('DeleteOne inside THEN user: ', user);

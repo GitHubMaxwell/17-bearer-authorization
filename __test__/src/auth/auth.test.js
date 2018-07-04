@@ -74,7 +74,7 @@ describe('Authentication Server', () => {
   it('GET: gets a 200 on a good BASIC login', () => {
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell'})
-      .then(response => {
+      .then(() => {
         // console.log('200 POST RES:', response.body);
         return mockRequest.get('/api/signin')
           .auth('khoa','khoawell')
@@ -101,7 +101,7 @@ describe('Authentication Server', () => {
 
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell'})
-      .then(response => {
+      .then(() => {
         return mockRequest.get('/api/signin')
           .set({'Authorization': `Bearer ${badToken}`, Accept: 'application/json'})
           .catch(err => {
@@ -118,14 +118,14 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('PUT: gets a 200 on a good BASIC token update', () => {
+  it('PUT: gets a 200 on a good BASIC token update', () => {
     // const payload = {
     //   _id: `${response.username}`,
     //   dog: 'poodle',
     // };
 
     return mockRequest.post('/api/special')
-      .send({username: 'khoa', password: 'khoawell'})
+      .send({username: 'khoa', password: 'khoawell'})//?
       .then(response => {
         //where in the response is the user id
         console.log('RES for ID:', response.text);
