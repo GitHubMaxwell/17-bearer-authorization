@@ -34,7 +34,7 @@ describe('Authentication Server', () => {
     expect(mockRequest).toBeDefined();
   });
 
-  xit('POST: gets a 200 on good signup', () => {
+  it('POST: gets a 200 on good signup', () => {
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell'})
       .then(response => {
@@ -42,28 +42,24 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('POST: gets a 401 on a bad signup', () => {
+  it('POST: gets a 401 on a bad signup', () => {
     return mockRequest.post('/api/signup')
       .catch(response => {
         expect(response.status).toEqual(401);
       });
   });
  
-  xit('GET: gets a 401 on a bad login with no credentials', () => {
+  it('GET: gets a 401 on a bad login with no credentials', () => {
     return mockRequest.get('/api/signin')
       .auth()
       .then(response => {
         // console.log('THEN');
-        // why is this going to the then
+        // why is this going to the then?
         expect(response.status).toEqual(401);
       });
-    //   .catch(response => {
-    //     console.log('CATCH');
-    //     expect(response.status).toEqual(401);
-    //   });
   });
 
-  xit('GET: gets a 404 on a good login with wrong credentials', () => {
+  it('GET: gets a 404 on a good login with wrong credentials', () => {
     return mockRequest.get('/api/signin')
       .auth('foo','bar')
       .catch(response => {
@@ -71,7 +67,7 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('GET: gets a 200 on a good BASIC login', () => {
+  it('GET: gets a 200 on a good BASIC login', () => {
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell'})
       .then(() => {
@@ -84,7 +80,7 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('GET: gets a 200 on a good BEARER token login', () => {
+  it('GET: gets a 200 on a good BEARER token login', () => {
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell'})
       .then(response => {
@@ -96,7 +92,7 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('GET: gets a 401 on a bad BEARER token login', () => {
+  it('GET: gets a 401 on a bad BEARER token login', () => {
     const badToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViMzkzNjU3MDQ0YWFlNjc3OTEwMDk5OSIsImlhdCI6MTUzMDQ3NjEyMH0.NQ8obftQL21zd30_XQ2dHnkaJrDk-HdTw81JSo_QZt';
 
     return mockRequest.post('/api/signup')
@@ -110,7 +106,7 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('GET: gets a 401 on no BEARER token provided', () => {
+  it('GET: gets a 401 on no BEARER token provided', () => {
     return mockRequest.get('/api/signin')
       .set({'Authorization': `Bearer `, Accept: 'application/json'})
       .catch(err => {
@@ -118,7 +114,7 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('PUT: gets a 200 on a good BASIC token update', () => {
+  it('PUT: gets a 200 on a good BASIC token update', () => {
     const payload = {
       dog: 'poodle',
     };
@@ -144,87 +140,98 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('PUT: gets a 200 on a good BEARER token update', () => {
+  it('PUT - test 200, for a post request with a valid body', () => {
     let params = '5b3d27d95d5ac6ca206019ee';
 
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell'})
       .then(response => {
-        //where in the response is the user id
-        // console.log('POST RESPONSE: ', response.text);
-        //response.body._id is how to get at 
-        // return mockRequest.put(`/api/update/${response.body._id}`)
-        return mockRequest.put(`/api/update/${params}`)
-          .set({'Authorization': `Bearer ${response.text}`, Accept: 'application/json'})
-          .send({dog: 'poodle'})
-          .then(res => {
-            console.log('POST RESPONSE: ', res.body);
-            expect(res.statusCode).toEqual(200);
-          });
-        // .catch(err => {
-        //   expect(err.statusCode).toEqual(401);
-        // });
-      });
-  });
-
-  xit('PUT: gets a 200 on a good BEARER token update', () => {
-    let params = '5b3d27d95d5ac6ca206019ee';
-
-    return mockRequest.post('/api/signup')
-      .send({username: 'khoa', password: 'khoawell'})
-      .then(response => {
-        // console.log('JWT: ', response.text);
         let jwt = response.text;
 
         return mockRequest.put(`/api/update/${params}`)
           .set({'Authorization': `Bearer ${jwt}`, Accept: 'application/json'})
           .send({dog: 'poodle'})
           .then( () => {
-            console.log('JWT: ');
-
             return mockRequest.get('/api/signin')
               .set({'Authorization': `Bearer ${jwt}`, Accept: 'application/json'})
               .then(res => {
-                // console.log('GET RESPONSE: ', jwt);
-                // console.log('GET RESPONSE: ', res);
-
                 expect(res.statusCode).toEqual(200);
               });
-            // console.log('POST RESPONSE: ', res.body);
-            // expect(res.statusCode).toEqual(200);
           });
       });
   });
 
-  it('PUT: gets a 404 on no ID passed', () => {
+  it('PUT - test 404, for a valid request made with an id that was not found', () => {
     // let params = '5b3d27d95d5ac6ca206019ee';
 
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell'})
       .then(response => {
-        // console.log('JWT: ', response.text);
         let jwt = response.text;
 
         return mockRequest.put(`/api/update/`)
           .set({'Authorization': `Bearer ${jwt}`, Accept: 'application/json'})
           .send({dog: 'poodle'})
-          // .then( () => {
-          //   console.log('JWT: ');
+          .then( data => {
+            // console.log(data.status);
+            expect(data.statusCode).toEqual(404);
+          });
+      });
+  });
+  it('PUT - test 401, if no token was provided', () => {
+    //gets the 401 from getAuth() in auth.js
 
-          //   return mockRequest.get('/api/signin')
-          //     .set({'Authorization': `Bearer ${jwt}`, Accept: 'application/json'})
-          //     .then(res => {
-          //       // console.log('GET RESPONSE: ', jwt);
-          //       console.log('GET RESPONSE: ', res.statusCode);
+    let params = '5b3d27d95d5ac6ca206019ee';
 
-          //       expect(res.statusCode).toEqual(200);
-          //     });
-          //   // console.log('POST RESPONSE: ', res.body);
-          //   // expect(res.statusCode).toEqual(200);
-          // })
-          .catch(err => {
-            console.log(err.statusCode);
-            expect(err.statusCode).toEqual(404);
+    return mockRequest.post('/api/signup')
+      .send({username: 'khoa', password: 'khoawell'})
+      .then( () => {
+        // let jwt = response.text;
+
+        return mockRequest.put(`/api/update/${params}`)
+          // .set({'Authorization': `Bearer ${jwt}`, Accept: 'application/json'})
+          .send({dog: 'poodle'})
+          .then( data => {
+            // console.log(data.status);
+            expect(data.status).toEqual(401);
+          });
+      });
+  });
+
+
+  it('PUT - test 400, if the body was invalid', () => {
+    //gets 401 from the badBod.js in app.js
+    let params = '5b3d27d95d5ac6ca206019ee';
+
+    return mockRequest.post('/api/signup')
+      .send({username: 'khoa', password: 'khoawell'})
+      .then( response => {
+        let jwt = response.text;
+
+        return mockRequest.put(`/api/update/${params}`)
+          .set({'Authorization': `Bearer ${jwt}`, Accept: 'application/json'})
+          .send({og: 'poodle'})
+          .then( data => {
+            expect(data.status).toEqual(400);
+          });
+      });
+  });
+
+  it('DELETE - get 200 with valid credentials', () => {
+    //gets 401 from the badBod.js in app.js
+    let params = '5b3d27d95d5ac6ca206019ee';
+
+    return mockRequest.post('/api/signup')
+      .send({username: 'khoa', password: 'khoawell'})
+      .then( response => {
+        let jwt = response.text;
+
+        return mockRequest.delete(`/api/delete/${params}`)
+          .set({'Authorization': `Bearer ${jwt}`, Accept: 'application/json'})
+          // .send({og: 'poodle'})
+          .then( data => {
+
+            expect(data.status).toEqual(200);
           });
       });
   });

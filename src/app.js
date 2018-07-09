@@ -4,6 +4,8 @@ import cors from 'cors';
 import dogRouter from './auth/dog_router.js';
 import errorHandler from './middleware/error.js';
 import notFound from './middleware/404.js';
+import badBod from './middleware/badBod.js';
+
 require('dotenv').config();
 
 let app = express();
@@ -14,9 +16,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 /////////////////////////// routes and error handling middleware
-app.use(dogRouter);
-app.use(notFound);
-app.use(errorHandler);
+app.use(dogRouter); // routes
+
+app.use(notFound); // 404
+app.use(badBod); // 400
+app.use(errorHandler); // 500
 /////////////////////////// server
 
 let server = false;

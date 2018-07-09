@@ -56,25 +56,15 @@ export default (req, res, next) => {
 
   try {
 
-    if(!req.params.id && req.method === 'DELETE') {
-      return getAuth();
-    }
-
-    if(!req.params.id && req.method === 'PUT') {
-      return getAuth();
-    }
-
     let auth = {};
     let authHeader = req.headers.authorization;
     //can also be req.get.authorization
-    console.log('req.headers.authorization in TRY', authHeader);
+    // console.log('req.headers.authorization in TRY', authHeader);
     // console.log('PARAMS', req.params);
 
     if(!authHeader) {
       return getAuth();
     }
-
-    
 
     if(authHeader.match(/basic/i)){
       let base64Header = authHeader.replace(/Basic\s+/i, '');

@@ -39,35 +39,31 @@ authRouter.get('/api/signin', auth, (req,res) => {
   res.send(req.token);
 });
 
-authRouter.put('/api/update/:id', auth, (req,res) => {
-  console.log(req.params.id);
+authRouter.put('/api/update/:id', auth, (req,res,next) => {
+  // console.log(req.params.id);
   // console.log(req.body);
+  // console.log(Object.keys(req.body).length);
 
-  // if(!req.params.id) {
-  //   console.log(req.params.id);
-  //   res.statusCode = 404;
-  //   res.statusMessage = 'No ID Entered';
-  //   res.end();
-  // }
+  if(Object.keys(req.body).length === 0 || Object.keys(req.body)[0] !== 'dog') {
+    // console.log('INSIDE no object keys');
+    // res.statusCode = 400;
+    // res.statusMessage = 'Invalid Body';
+    // res.send('Invalid Body');
+    next(400);
+  }
+  if(req.params.id) {
+    console.log('INSIDE before update PUT');
 
-  // DogModel.findByIdAndUpdate(req.params.id, req.body, {new : true})
-  DogModel.findOneAndUpdate(req.params.id, req.body, {new : true})
-
-    .then(dog => {
-      // console.log('Response: ',dog);
-      // console.log('Response: ',dog.dog);
-
-      res.send(dog);
-    })
-    .catch(() => {
-      console.log('wtf!');
-    });
-
-  //what does this get back from the operations? 
-  // let update = DogModel.update(req.body); 
-  // console.log('PUT UPDATE: ', update);
-
-  // res.send(res.status);
+    DogModel.findOneAndUpdate(req.params.id, req.body, {new : true})
+    // this then and catch ONLY apply to the action DogModel.find...
+      .then(dog => {
+        res.send(dog);
+      })
+      .catch(err => {
+        console.log('ERROR: ',err);
+        next(err);
+      });
+  }
 });
 
 // router.put('/:id', (req, res, next) => {
@@ -77,18 +73,19 @@ authRouter.put('/api/update/:id', auth, (req,res) => {
 // });
 
 //pass the id of a resource though the url endpoint (using req.params) to delete a resource
-authRouter.delete('/api/delete/:id', auth, (req,res) => {
+authRouter.delete('/api/delete/:id', auth, (req,res,next) => {
   console.log('ID:', req.params.id);
 
   // its not user._id so what is the way to target this
   // DogModel.findByIdAndRemove(req.params.id)
-  DogModel.remove({_id:req.params.id})
-
-    .then(results => {
-      console.log(results);
-      res.send(results);
-    })
-    .catch(next);
+  if(req.params.id) {
+    DogModel.remove({_id:req.params.id})
+      .then(results => {
+        console.log(results);
+        res.send(results);
+      })
+      .catch(next);
+  }
 });
 
 // router.delete('/:id', auth, (req, res, next) => {
@@ -97,18 +94,5 @@ authRouter.delete('/api/delete/:id', auth, (req,res) => {
 //     .catch(next);
 // });
 
-authRouter.delete('/api/delete/', auth, (req,res) => {
-  // if(!req.params) {
-  //   console.log('DIDNT GIVE ID');
-  //   // badReq();
-  // }
-  DogModel.deleteAll()
-    .then(() => {
-      console.log('After deleteOne executed and in then onto next');
-      res.send('DELETE SUCCESS USER');
-    })
-    .catch(next);
-});
-///////////////////////////////// end routes
 
 export default authRouter;
