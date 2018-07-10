@@ -48,11 +48,11 @@ dogSchema.statics.authenticate = function(auth) {
 dogSchema.statics.authorize = function(token) {
   let parsedToken = jwt.verify(token, process.env.APP_SECRET || 'changeit');
   // console.log('Authorize user parsed token: ', parsedToken);
-
+  console.log(parsedToken);
   let query = {_id:parsedToken.id};
   return this.findOne(query)
     .then(user => {
-      // console.log('Authorize user: ', user);
+      console.log('Authorize user: ', user);
       return user;
     })
     .catch( error => error );

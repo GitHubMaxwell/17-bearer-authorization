@@ -31,14 +31,18 @@ authRouter.post('/api/signup', (req,res,next) => {
 authRouter.get('/api/signin', auth, (req,res) => {
   res.cookie('Token', req.token);
   // console.log('REQ TOKEN from get route: ', req.token);
-
+  // let creds = [req.id,req.token];
   // why is res.cookie a function???
   // console.log('REQ COOKIE from get route: ', res.cookie);
-
+  // console.log(creds);
+  // res.send(req.id);
   res.send(req.token);
+
 });
 
+// authRouter.put('/api/update', auth, (req,res,next) => {
 authRouter.put('/api/update/:id', auth, (req,res,next) => {
+
   // console.log(req.params.id);
   // console.log(req.body);
   // console.log(Object.keys(req.body).length);
@@ -50,8 +54,10 @@ authRouter.put('/api/update/:id', auth, (req,res,next) => {
     // res.send('Invalid Body');
     next(400);
   }
+  // if(req.params.id) {
   if(req.params.id) {
-    console.log('INSIDE before update PUT');
+
+    // console.log('INSIDE before update PUT', req.id);
 
     DogModel.findOneAndUpdate(req.params.id, req.body, {new : true})
     // this then and catch ONLY apply to the action DogModel.find...

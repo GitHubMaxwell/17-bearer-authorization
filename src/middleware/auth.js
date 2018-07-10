@@ -12,11 +12,14 @@ export default (req, res, next) => {
           getAuth();
         }
         else {
-        //   console.log('Authorize going to Next', user);
+          console.log('Authorize going to Next', user);
+          // before the next we need to assignt 
+          req.id = user._id;
           next();
         }
       })
       .catch(() => {
+        // console.log('Authorize going to Next', user);
         next();
       });
   };
@@ -59,7 +62,7 @@ export default (req, res, next) => {
     let auth = {};
     let authHeader = req.headers.authorization;
     //can also be req.get.authorization
-    // console.log('req.headers.authorization in TRY', authHeader);
+    console.log('authHeader:', authHeader);
     // console.log('PARAMS', req.params);
 
     if(!authHeader) {
@@ -77,6 +80,7 @@ export default (req, res, next) => {
     }
     /////////////////////////////////////////////
     else if(authHeader.match(/bearer/i)){
+      console.log('authHeader:', authHeader);
 
       let token = authHeader.replace(/bearer\s+/i, '');
 

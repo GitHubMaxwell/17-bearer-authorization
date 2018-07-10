@@ -30,10 +30,6 @@ describe('Authentication Server', () => {
     mockgoose.helper.reset().then(done);
   });
 
-  xit('mockRequest should exist', () => {
-    expect(mockRequest).toBeDefined();
-  });
-
   it('POST: gets a 200 on good signup', () => {
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell'})
@@ -168,13 +164,18 @@ describe('Authentication Server', () => {
       .send({username: 'khoa', password: 'khoawell'})
       .then(response => {
         let jwt = response.text;
+        console.log(response.status);
+        // console.log(response.text);
 
-        return mockRequest.put(`/api/update/`)
+        // let jwt = 'response.text';
+        return mockRequest.put(`/api/update`)
+        // return mockRequest.put(`/api/update/${params}`)
+
           .set({'Authorization': `Bearer ${jwt}`, Accept: 'application/json'})
           .send({dog: 'poodle'})
           .then( data => {
-            // console.log(data.status);
-            expect(data.statusCode).toEqual(404);
+            console.log(data.status);
+            expect(data.statusCode).toEqual(404); 
           });
       });
   });
@@ -201,14 +202,16 @@ describe('Authentication Server', () => {
 
   it('PUT - test 400, if the body was invalid', () => {
     //gets 401 from the badBod.js in app.js
-    let params = '5b3d27d95d5ac6ca206019ee';
+    // let params = '5b3d27d95d5ac6ca206019ee';
 
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell'})
       .then( response => {
         let jwt = response.text;
 
-        return mockRequest.put(`/api/update/${params}`)
+        // return mockRequest.put(`/api/update/${params}`)
+        return mockRequest.put(`/api/update`)
+
           .set({'Authorization': `Bearer ${jwt}`, Accept: 'application/json'})
           .send({og: 'poodle'})
           .then( data => {
