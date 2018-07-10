@@ -58,7 +58,13 @@ describe('Authentication Server', () => {
   it('GET: gets a 404 on a good login with wrong credentials', () => {
     return mockRequest.get('/api/signin')
       .auth('foo','bar')
+      .then(response => {
+        console.log(response.status);
+        expect(response.status).toEqual(404);
+
+      })
       .catch(response => {
+        console.log(response.status);
         expect(response.status).toEqual(404);
       });
   });
@@ -71,6 +77,7 @@ describe('Authentication Server', () => {
         return mockRequest.get('/api/signin')
           .auth('khoa','khoawell')
           .then(res => {
+            console.log(res.status);
             expect(res.statusCode).toEqual(200);
           });
       });
@@ -202,18 +209,18 @@ describe('Authentication Server', () => {
 
   it('PUT - test 400, if the body was invalid', () => {
     //gets 401 from the badBod.js in app.js
-    // let params = '5b3d27d95d5ac6ca206019ee';
+    let params = '5b3d27d95d5ac6ca206019ee';
 
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell'})
       .then( response => {
         let jwt = response.text;
 
-        // return mockRequest.put(`/api/update/${params}`)
-        return mockRequest.put(`/api/update`)
+        return mockRequest.put(`/api/update/${params}`)
+        // return mockRequest.put(`/api/update`)
 
           .set({'Authorization': `Bearer ${jwt}`, Accept: 'application/json'})
-          .send({og: 'poodle'})
+          // .send({og: 'poodle'})
           .then( data => {
             expect(data.status).toEqual(400);
           });

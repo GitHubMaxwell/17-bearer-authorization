@@ -15,6 +15,7 @@ authRouter.post('/api/signup', (req,res,next) => {
   // console.log('POST REQ', req);
   if(!Object.keys(req.body).length){
     noBody(res);
+    // next(400);
   }
 
   let user = new DogModel(req.body);
@@ -28,7 +29,11 @@ authRouter.post('/api/signup', (req,res,next) => {
 });
 
 
-authRouter.get('/api/signin', auth, (req,res) => {
+authRouter.get('/api/signin/:id', auth, (req,res) => {
+  if(!Object.keys(req.params.id).length){
+    noBody(res);
+    // next(400);
+  }
   res.cookie('Token', req.token);
   // console.log('REQ TOKEN from get route: ', req.token);
   // let creds = [req.id,req.token];
@@ -92,6 +97,7 @@ authRouter.delete('/api/delete/:id', auth, (req,res,next) => {
       .catch(next);
   }
 });
+
 
 // router.delete('/:id', auth, (req, res, next) => {
 //   Band.findByIdAndRemove(req.params.id)
