@@ -10,7 +10,6 @@ import auth from '../middleware/auth.js';
 import noBody from '../middleware/badReq.js';
 
 ///////////////////////////////// start routes
-
 authRouter.post('/api/signup', (req,res,next) => {
   //maybe since now this has auth middleware move this error handling there or have the getAuth() function handle it???
   // console.log('POST REQ', req);
