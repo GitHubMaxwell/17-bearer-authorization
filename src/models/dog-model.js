@@ -40,22 +40,33 @@ dogSchema.statics.authenticate = function(auth) {
   return this.findOne(query)
     .then(user => user && user.comparePassword(auth.password))
     //comparePassword is below
-    .catch( error => {return error;} );
+    .catch( error => error );
   //maybe need error passed in
   // console.log('Authenticate ERROR', error.status);
 };
 
 dogSchema.statics.authorize = function(token) {
+  console.log('GETTING to Authorize dog-model.js: ', token);
+
+  //put this verify in an if?
+  // this isnt async because thers no callback = docs on npm
   let parsedToken = jwt.verify(token, process.env.APP_SECRET || 'changeit');
-  // console.log('Authorize user parsed token: ', parsedToken);
-  console.log(parsedToken);
-  let query = {_id:parsedToken.id};
-  return this.findOne(query)
+  console.log('parsedToken after jwt.verify: ', parsedToken);
+  // console.log(parsedToken);
+  // let query = {_id:parsedToken.id};
+
+  // return this.findOne(query)
+  return this.findOne({_id:parsedToken.id})
     .then(user => {
-      console.log('Authorize user: ', user);
+      // console.log('Authorize user: ', user);
       return user;
     })
-    .catch( error => error );
+    // .catch( error => error );
+    .catch( error => {
+      console.log('Authorize Error',error);
+      throw error;
+    } );
+
   //maybe need error passed in
   // console.log('Authorize ERROR');
 };

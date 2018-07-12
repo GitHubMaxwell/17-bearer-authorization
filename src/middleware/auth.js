@@ -5,22 +5,27 @@ import User from '../models/dog-model.js';
 export default (req, res, next) => {
 
   let authorize = (token) => {
+    console.log('Authorize');
+
     User.authorize(token)
+
       .then( user => {
         if(!user) {
-        //   console.log('Authorize No User');
+          console.log('Authorize No User');
           getAuth();
         }
         else {
-          console.log('Authorize going to Next', user);
+          //success
+          console.log('Authorize success going to Next', user);
           // before the next we need to assignt 
           req.id = user._id;
           next();
         }
       })
       .catch(() => {
-        // console.log('Authorize going to Next', user);
-        next();
+        // failure
+        console.log('Authorize failure going to Next(401)');
+        next(401);
       });
   };
 
@@ -47,7 +52,7 @@ export default (req, res, next) => {
   };
 
   let getAuth = () => {
-    // console.log('auth.js getAuth');
+    console.log('auth.js getAuth');
     next({
       status:401,
       statusMessage: 'Unauthorized getAuth',
@@ -62,7 +67,7 @@ export default (req, res, next) => {
     let auth = {};
     let authHeader = req.headers.authorization;
     //can also be req.get.authorization
-    console.log('authHeader:', authHeader);
+    // console.log('authHeader:', authHeader);
     // console.log('PARAMS', req.params);
 
     if(!authHeader) {
@@ -70,6 +75,8 @@ export default (req, res, next) => {
     }
 
     if(authHeader.match(/basic/i)){
+      console.log('BASIC AUTH');
+
       let base64Header = authHeader.replace(/Basic\s+/i, '');
       let base64Buffer = Buffer.from(base64Header, 'base64');
       let bufferString = base64Buffer.toString();
@@ -80,7 +87,7 @@ export default (req, res, next) => {
     }
     /////////////////////////////////////////////
     else if(authHeader.match(/bearer/i)){
-      console.log('authHeader:', authHeader);
+      console.log('BEARER AUTH');
 
       let token = authHeader.replace(/bearer\s+/i, '');
 
@@ -89,7 +96,7 @@ export default (req, res, next) => {
     }
     /////////////////////////////////////////////
   }
-  catch(e) {
-    next(e);
+  catch(err) {
+    next(err);
   }
 };

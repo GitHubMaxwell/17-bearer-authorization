@@ -5,6 +5,8 @@ import dogRouter from './auth/dog_router.js';
 import errorHandler from './middleware/error.js';
 import notFound from './middleware/404.js';
 import badBod from './middleware/badBod.js';
+import badBearer from './middleware/badBearer.js';
+
 
 require('dotenv').config();
 
@@ -18,9 +20,10 @@ app.use(express.urlencoded({extended:true}));
 /////////////////////////// routes and error handling middleware
 app.use(dogRouter); // routes
 
+app.use(badBearer); // 401
 app.use(notFound); // 404
 app.use(badBod); // 400
-app.use(errorHandler); // 500
+app.use(errorHandler); // 555 //change back to 500
 /////////////////////////// server
 
 let server = false;

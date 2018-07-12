@@ -10,12 +10,11 @@ import auth from '../middleware/auth.js';
 import noBody from '../middleware/badReq.js';
 
 ///////////////////////////////// start routes
-authRouter.post('/api/signup', (req,res,next) => {
-  //maybe since now this has auth middleware move this error handling there or have the getAuth() function handle it???
-  // console.log('POST REQ', req);
+authRouter.post('/api/signup', (req,res) => {
+
   if(!Object.keys(req.body).length){
     noBody(res);
-    // next(400);
+    //put this as a next
   }
 
   let user = new DogModel(req.body);
@@ -25,15 +24,44 @@ authRouter.post('/api/signup', (req,res,next) => {
       //this returns back NOT the user but the JWT (generateToken)
       return res.send(user.generateToken());
     })
-    .catch( next );
+    .catch( err => {
+      console.log('POST ROUTE error',err);
+      // next();
+      // where is this catch going to
+    });
+
+  // the hope is that with a bad bearer token 
+  //but its skipping out of the dog-model and going back to app.js
+
 });
 
+// authRouter.get('/api/signin', auth, (req,res) => {
+//   console.log('REQ PARAMS ID: ', req.params.id);
+//   res.cookie('Token', req.token);
+//   res.send(req.token);
+// });
+
+authRouter.get('/api/signin', auth, (req, res, next) => {
+  if (req.id) {
+
+    DogModel.find({ userID: req.id })
+      .then(response => {
+        res.send(response);
+      })
+      .catch(next);
+
+  } else {
+    next(401);
+  }
+});
 
 authRouter.get('/api/signin/:id', auth, (req,res) => {
-  if(!Object.keys(req.params.id).length){
-    noBody(res);
-    // next(400);
-  }
+  console.log('REQ PARAMS ID: ', req.params.id);
+
+  // if(!Object.keys(req.params.id).length){
+  //   noBody(res);
+  //   // next(400);
+  // }
   res.cookie('Token', req.token);
   // console.log('REQ TOKEN from get route: ', req.token);
   // let creds = [req.id,req.token];

@@ -12,6 +12,8 @@ require('dotenv').config();
 
 jest.setTimeout(50000);
 
+//do i have to put done()s in all the before and after stuff?
+
 afterAll( () => {
   mongoose.connection.close();
 });
@@ -38,72 +40,83 @@ describe('Authentication Server', () => {
       });
   });
 
-  it('POST: gets a 401 on a bad signup', () => {
+  it('POST - test 400, if no body was provided or if the body was invalid', () => {
     return mockRequest.post('/api/signup')
-      .catch(response => {
-        expect(response.status).toEqual(401);
+      .then(response => {
+        // console.log(response.status);
+        expect(response.status).toEqual(400);
       });
   });
  
   it('GET: gets a 401 on a bad login with no credentials', () => {
-    return mockRequest.get('/api/signin')
-      .auth()
+    return mockRequest.get('/api/signin/max')
+      // .auth()
       .then(response => {
-        // console.log('THEN');
+        console.log(response.status);
         // why is this going to the then?
         expect(response.status).toEqual(401);
       });
   });
 
-  it('GET: gets a 404 on a good login with wrong credentials', () => {
-    return mockRequest.get('/api/signin')
-      .auth('foo','bar')
-      .then(response => {
-        console.log(response.status);
-        expect(response.status).toEqual(404);
+  it('GET: gets a 404 on a good login with not found id', () => {
+    //id not as in an incoorect route NOT incorrect credentials because 401 handles that
+    return mockRequest.post('/api/signup')
+      .send({username: 'foo', password: 'bar'})
+      .then( () => {
 
-      })
-      .catch(response => {
-        console.log(response.status);
-        expect(response.status).toEqual(404);
+        return mockRequest.get('/api/signi')
+          .auth('foo','bar')
+          .then(response => {
+            console.log(response.status);
+            expect(response.status).toEqual(404);
+
+          });
       });
   });
 
-  it('GET: gets a 200 on a good BASIC login', () => {
+  it('DOESNT WORK = GET: gets a 200 on a good BASIC login', () => {
+
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell'})
-      .then(() => {
-        // console.log('200 POST RES:', response.body);
+      .then( response => {
+        console.log('200 POST RES:', response.status);
+
         return mockRequest.get('/api/signin')
           .auth('khoa','khoawell')
           .then(res => {
-            console.log(res.status);
+            console.log(res.statusCode);
             expect(res.statusCode).toEqual(200);
           });
       });
   });
 
   it('GET: gets a 200 on a good BEARER token login', () => {
+
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell'})
       .then(response => {
+        let token = response.text;
+
         return mockRequest.get('/api/signin')
-          .set({'Authorization': `Bearer ${response.text}`, Accept: 'application/json'})
+          .set({'Authorization': `Bearer ${token}`, Accept: 'application/json'})
           .then(res => {
             expect(res.statusCode).toEqual(200);
           });
       });
   });
 
-  it('GET: gets a 401 on a bad BEARER token login', () => {
-    const badToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViMzkzNjU3MDQ0YWFlNjc3OTEwMDk5OSIsImlhdCI6MTUzMDQ3NjEyMH0.NQ8obftQL21zd30_XQ2dHnkaJrDk-HdTw81JSo_QZt';
+  it('DOESNT WORK = GET: gets a 401 on a bad BEARER token login', () => {
+    // const badToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViNDU1ZTM5MTUzYjM3NTQwYjM0MDUyNSIsImlhdCI6MTUzMTI3Mjc2MX0.QchHUSQF22UQE0Ma0L8vvAdRNTJWy__oIsekJuUSS3M';
 
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell'})
-      .then(() => {
+      .then(res => {
+        console.log(res.text);
+
         return mockRequest.get('/api/signin')
-          .set({'Authorization': `Bearer ${badToken}`, Accept: 'application/json'})
-          .catch(err => {
+          .set({'Authorization': `Bearer `, Accept: 'application/json'})
+          .then(err => {
+            console.log(err.statusCode);
             expect(err.statusCode).toEqual(401);
           });
       });
@@ -111,8 +124,8 @@ describe('Authentication Server', () => {
 
   it('GET: gets a 401 on no BEARER token provided', () => {
     return mockRequest.get('/api/signin')
-      .set({'Authorization': `Bearer `, Accept: 'application/json'})
-      .catch(err => {
+      // .set({'Authorization': `Bearer `, Accept: 'application/json'})
+      .then(err => {
         expect(err.statusCode).toEqual(401);
       });
   });
@@ -136,9 +149,6 @@ describe('Authentication Server', () => {
           .then(res => {
 
             expect(res.statusCode).toEqual(200);
-          })
-          .catch(err => {
-            expect(err.statusCode).toEqual(401);
           });
       });
   });
@@ -155,6 +165,7 @@ describe('Authentication Server', () => {
           .set({'Authorization': `Bearer ${jwt}`, Accept: 'application/json'})
           .send({dog: 'poodle'})
           .then( () => {
+
             return mockRequest.get('/api/signin')
               .set({'Authorization': `Bearer ${jwt}`, Accept: 'application/json'})
               .then(res => {
