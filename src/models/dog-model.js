@@ -34,6 +34,7 @@ dogSchema.pre('save', function(next) {
       throw error; 
     });
 
+    
 });
 
 dogSchema.statics.authenticate = function(auth) {
