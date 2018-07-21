@@ -24,23 +24,34 @@ dogSchema.pre('save', function(next) {
 
   bcrypt.hash(this.password,10)
     .then( hashedPassword => {
-      // console.log('hashedPassword: ', hashedPassword);
+      console.log('hashedPassword: ', hashedPassword);
       this.password = hashedPassword;
-      // console.log('Password hashed and on to next()');
+      console.log('Password hashed and on to next()');
       next();
     })
-    .catch( error => error );
-  // console.log('PRE SAVE ERROR', error.status);
+    .catch( error => {
+      console.log('PRE SAVE ERROR', error.status);
+      throw error; 
+    });
 
 });
 
 dogSchema.statics.authenticate = function(auth) {
   console.log('dogModel Authenticate', auth.username);
   let query = {username:auth.username};
+
   return this.findOne(query)
-    .then(user => user && user.comparePassword(auth.password))
+    // .then(user => user && user.comparePassword(auth.password))
+    .then(user => {
+      console.log('authenticate THEN');
+      user && user.comparePassword(auth.password);
+    })
+
     //comparePassword is below
-    .catch( error => error );
+    .catch( error => {
+      console.log('authenticate CATCH');
+      throw error; 
+    });
   //maybe need error passed in
   // console.log('Authenticate ERROR', error.status);
 };
@@ -71,10 +82,27 @@ dogSchema.statics.authorize = function(token) {
   // console.log('Authorize ERROR');
 };
 
-dogSchema.methods.comparePassword = function(password) {
+dogSchema.methods.comparePassword = function (password) {
+  console.log('Compare password', password, this.password);
   return bcrypt.compare(password, this.password)
-    .then( valid => valid ? this : null);
+    // .then( valid => valid ? this : null);
+    .then(response => {
+      console.log('comparePassword response',response);
+      return response ? this : null;
+    });
+  // no catch handling here / it goes back to auth.js getAuth 401
 };
+
+/*
+
+userSchema.methods.passwordCheck = function (password) {
+  return bcrypt.compare(password, this.password)
+    .then(response => {
+      return response ? this : null;
+    });
+};
+
+*/
 
 dogSchema.methods.generateToken = function() {
   return jwt.sign( {id:this._id}, process.env.APP_SECRET || 'changeit');

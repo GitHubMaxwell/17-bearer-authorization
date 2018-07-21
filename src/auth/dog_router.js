@@ -10,7 +10,8 @@ import auth from '../middleware/auth.js';
 import noBody from '../middleware/badReq.js';
 
 ///////////////////////////////// start routes
-authRouter.post('/api/signup', (req,res) => {
+//adding next in parameters and in catch
+authRouter.post('/api/signup', (req,res,next) => {
 
   if(!Object.keys(req.body).length){
     noBody(res);
@@ -20,7 +21,7 @@ authRouter.post('/api/signup', (req,res) => {
   let user = new DogModel(req.body);
   user.save()
     .then( user => {
-      // console.log('USER from POST route:', user);
+      console.log('USER from POST route:', user);
       //this returns back NOT the user but the JWT (generateToken)
       return res.send(user.generateToken());
     })
@@ -29,10 +30,8 @@ authRouter.post('/api/signup', (req,res) => {
       // next();
       // where is this catch going to
     });
-
-  // the hope is that with a bad bearer token 
-  //but its skipping out of the dog-model and going back to app.js
-
+  // .catch(next);
+    
 });
 
 // authRouter.get('/api/signin', auth, (req,res) => {
@@ -55,22 +54,43 @@ authRouter.get('/api/signin', auth, (req, res, next) => {
   }
 });
 
-authRouter.get('/api/signin/:id', auth, (req,res) => {
-  console.log('REQ PARAMS ID: ', req.params.id);
+// authRouter.get('/api/signin/:id', auth, (req,res) => {
+//   console.log('REQ PARAMS ID: ', req.params.id);
 
-  // if(!Object.keys(req.params.id).length){
-  //   noBody(res);
-  //   // next(400);
-  // }
-  res.cookie('Token', req.token);
-  // console.log('REQ TOKEN from get route: ', req.token);
-  // let creds = [req.id,req.token];
-  // why is res.cookie a function???
-  // console.log('REQ COOKIE from get route: ', res.cookie);
-  // console.log(creds);
-  // res.send(req.id);
-  res.send(req.token);
+//   // if(!Object.keys(req.params.id).length){
+//   //   noBody(res);
+//   //   // next(400);
+//   // }
+//   res.cookie('Token', req.token);
+//   res.send(req.token);
 
+// });
+
+
+authRouter.get('/api/signin/:id', auth, (req, res, next) => {
+
+  if (req.id) {
+    //auth.js authorize success assigns req.id the id of the user profile
+
+    DogModel.findById(req.params.id)
+      .then(response => {
+        if(response === null) {
+          next();
+        }
+        if (JSON.stringify(response.userID) === JSON.stringify(req.id)) {
+          res.send(response);
+        } else {
+          next(401);
+        }
+      })
+      .catch(() =>{
+        //if cant find by req.params.id
+        next();
+      });
+  } else {
+    //if no req.id
+    next(401);
+  }
 });
 
 // authRouter.put('/api/update', auth, (req,res,next) => {
