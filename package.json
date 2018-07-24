@@ -4,7 +4,7 @@
   "description": "![CF](https://camo.githubusercontent.com/70edab54bba80edb7493cad3135e9606781cbb6b/687474703a2f2f692e696d6775722e636f6d2f377635415363382e706e67) 17: Bearer Auth ===",
   "main": "index.js",
   "scripts": {
-    "test": "jest --verbose --coverage --detectOpenHandles --forceExit",
+    "test": "jest --verbose --coverage --forceExit",
     "test-watch": "jest --watchAll",
     "lint": "eslint **/*.js",
     "start": "node index.js",

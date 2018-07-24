@@ -1,14 +1,15 @@
 'use strict';
 
-import User from '../models/dog-model.js';
+import User from '../models/user-model.js';
 
 export default (req, res, next) => {
 
   let authorize = (token) => {
+    // console.log('Authorize: ', token);
     console.log('Authorize');
 
-    User.authorize(token)
 
+    User.authorize(token)
       .then( user => {
         if(!user) {
           console.log('Authorize No User');
@@ -37,8 +38,10 @@ export default (req, res, next) => {
         // console.log('BEFORE IF User.authenticate', user);
 
         if(!user) {
-        //   console.log('auth.js authenticate NO USER ERROR', user);
-          getAuth();
+          console.log('auth.js authenticate NO USER ERROR', user);
+          // getAuth();
+          next(404);
+
         }
         else {
           req.token = user.generateToken();

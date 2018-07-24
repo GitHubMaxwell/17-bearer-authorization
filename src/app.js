@@ -1,12 +1,13 @@
 import express from 'express';
 // import morgan from 'morgan';
 import cors from 'cors';
-import dogRouter from './auth/dog_router.js';
+import authRouter from './auth/auth_router.js';
+import userRouter from './routes/router.js';
+
 import errorHandler from './middleware/error.js';
 import notFound from './middleware/404.js';
 import badBod from './middleware/badBod.js';
 import badBearer from './middleware/badBearer.js';
-
 
 require('dotenv').config();
 
@@ -18,7 +19,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 /////////////////////////// routes and error handling middleware
-app.use(dogRouter); // routes
+app.use(authRouter); // auth routes
+app.use(userRouter); // user routes
+
 
 app.use(badBearer); // 401
 app.use(notFound); // 404
@@ -33,7 +36,7 @@ module.exports = {
     if(!server) {
       server = app.listen(port, (err) => {
         if(err) {throw err;}
-        console.log(`SERVER: ${server}`);
+        // console.log(`SERVER: ${server}`);
         console.log(`Server is running on port: ${port}`);
       });
     }
