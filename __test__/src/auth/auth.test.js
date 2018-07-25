@@ -32,7 +32,7 @@ describe('Authentication Server', () => {
     mockgoose.helper.reset().then(done);
   });
 
-  xit('GET - test 200, for a request made with a valid id', () => {
+  it('GET - test 200, for a request made with a valid id', () => {
 
     return mockRequest.post('/api/signup')
       .send({username: 'max', password: 'maxwell', email: 'max@max'})
@@ -52,7 +52,7 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('GET - test 401, if no token was provided', () => {
+  it('GET - test 401, if no token was provided', () => {
     // return mockRequest.get('/api/signin/max')
     return mockRequest.get('/api/signin')
       // .auth()
@@ -63,7 +63,7 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('GET - test 404, for a valid request with an id that was not found', () => {
+  it('GET - test 404, for a valid request with an id that was not found', () => {
     return mockRequest.get('/api/signin')
       .auth('foo','bar')
       .then(response => {
@@ -72,7 +72,7 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('PUT - test 200, for a post request with a valid body', () => {
+  it('PUT - test 200, for a post request with a valid body', () => {
     // need to get this dynamically from creating a dog not this static id
     // let params = '5b3d27d95d5ac6ca206019ee';
 
@@ -100,7 +100,7 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('PUT - test 401, if no token was provided', () => {
+  it('PUT - test 401, if no token was provided', () => {
     //gets the 401 from getAuth() in auth.js
 
     return mockRequest.post('/api/signup')
@@ -125,7 +125,7 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('PUT - test 400, if the body was invalid', () => {
+  it('PUT - test 400, if the body was invalid', () => {
 
     return mockRequest.post('/api/signup')
       .send({username: 'max', password: 'maxwell', email: 'max@max'})
@@ -186,7 +186,7 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('POST - test 200, for a post request with a valid body', () => {
+  it('POST - test 200, for a post request with a valid body', () => {
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell',email: 'khoa@max'})
       .then(response => {
@@ -200,7 +200,7 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('POST - test 400, if no body was provided or if the body was invalid', () => {
+  it('POST - test 400, if no body was provided or if the body was invalid', () => {
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell',email: 'khoa@max'})
       .then(response => {
@@ -215,7 +215,7 @@ describe('Authentication Server', () => {
       });
   });
 
-  xit('POST - test 401, if no token was provided', () => {
+  it('POST - test 401, if no token was provided', () => {
     return mockRequest.post('/api/signup')
       .send({username: 'khoa', password: 'khoawell',email: 'khoa@max'})
       .then( () => {
