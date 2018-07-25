@@ -1,107 +1,21 @@
-import mongoose, {Schema} from 'mongoose';
-// import mongoose, {Schema} from 'mongoose';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 
-/*
-this resource must have a property of userID that references the _id of the user that created the resource
-
-the userID property can only be set from an _id found using your bearer auth middleware module
-*/
-
-const dogSchema = new mongoose.Schema({
-  username: {type: String, required: true, unique: true},
-  password: {type: String, required: true},
+const dogsSchema = new mongoose.Schema({
+  color: {type: String},
   dog: {type: String},
-  // userId: {type: String},
-  userId: {type: Schema.Types.ObjectId},
-  // userId has to go here??? but assigned in the PRE / best practice?
-  // type String? doesnt work with type: Number
-});
-
-dogSchema.pre('save', function(next) {
-  // console.log('dogModel PRE SAVE');
-  this.userId = this._id;
-
-  bcrypt.hash(this.password,10)
-    .then( hashedPassword => {
-      this.password = hashedPassword;
-      // console.log('Password hashed and on to next()');
-      next();
-    })
-    .catch( error => error );
-  // console.log('PRE SAVE ERROR', error.status);
+  userId: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
+  // userId: {type: mongoose.Types.ObjectId, ref: 'user'},
 
 });
+//how to dynamically add userId to the dog model
 
-dogSchema.statics.authenticate = function(auth) {
-  // console.log('dogModel Authenticate', auth.username);
-  let query = {username:auth.username};
-  return this.findOne(query)
-    .then(user => user && user.comparePassword(auth.password))
-    //comparePassword is below
-    .catch( error => {return error;} );
-  //maybe need error passed in
-  // console.log('Authenticate ERROR', error.status);
-};
+// lab mission: user signs in
+// anytime use makes new dog, that instance of dog is tied to the SPECIFC user signed in
+// one way relationship between the dog(s) and a user BUT not the other way around
 
-dogSchema.statics.authorize = function(token) {
-  let parsedToken = jwt.verify(token, process.env.APP_SECRET || 'changeit');
-  // console.log('Authorize user parsed token: ', parsedToken);
-
-  let query = {_id:parsedToken.id};
-  return this.findOne(query)
-    .then(user => {
-      console.log('Authorize user: ', user);
-      return user;
-    })
-    .catch( error => error );
-  //maybe need error passed in
-  // console.log('Authorize ERROR');
-};
-
-dogSchema.methods.update = function(userId, payload) {
-  // console.log('Update user userId: ', userId);
-  // console.log('Update user payload: ', payload);
+export default mongoose.model('dogs', dogsSchema);
 
 
-  // let query = {userId:payload.id};
-  // let query = {_id:payload.id};
-  let query = {_id:userId};
-  return this.findByIdAndUpdate(query, payload)
-    .then(user => {
-      return user;
-    })
-    .catch( error => error );
-};
-
-dogSchema.methods.deleteOne = function(userId) {
-  console.log('DeleteOne user userId: ', userId);
-  let query = {_id:userId};
-  return this.findByIdAndDelete(query)
-    .then(user => {
-      console.log('DeleteOne inside THEN user: ', user);
-
-      return user;
-    })
-    .catch( error => error );
-};
-
-dogSchema.methods.deleteAll = function() {
-  return this.remove({})
-    .then(user => {
-      return user;
-    })
-    .catch( error => error );
-};
-
-dogSchema.methods.comparePassword = function(password) {
-  return bcrypt.compare(password, this.password)
-    .then( valid => valid ? this : null);
-};
-
-dogSchema.methods.generateToken = function() {
-  return jwt.sign( {id:this._id}, process.env.APP_SECRET || 'changeit');
-};
-
-export default mongoose.model('dogs', dogSchema);
+// db.dogs.remove({}) versus the .drop cleans out the Schema / see the difference in the docs -> mongoose
+//DROP is the BETTER choice
+//i renamed everything and shouldve dropped the db completed to clean it
