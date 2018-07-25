@@ -33,9 +33,11 @@ router.get('/api/v1/alldogs', auth, (req, res, next) => {
 
 router.put('/api/v1/dogs/:id', auth, (req,res,next) => {
   console.log('put route');
+
   if(!Object.keys(req.body).length) {
     noBody(res);
   }
+
   if(req.id) {
 
     if(req.params.id) {
@@ -50,21 +52,33 @@ router.put('/api/v1/dogs/:id', auth, (req,res,next) => {
       Dog.findById(req.params.id)
       //pass you the whole dog
         .then( dog => {
-        //   sendJSON(res,data);
+        // sendJSON(res,data);
         // have to stringify them
           console.log('Dog inside findById: ',dog);
 
-          if(JSON.stringify(dog.userId) === JSON.stringify(req.id)) {
-            Dog.findOneAndUpdate(updateTarget, updateContent, {new:true})
-              .then( data => {
-                sendJSON(res,data);
-              })
-            //   .catch(next);
-              .catch(next(404));
+          
+          console.log('Dog = null: ',dog);
+          //   next(404);
+          
+          if(dog !== null) {
+            console.log('Dog = null: ',dog);
 
-            
+            if(JSON.stringify(dog.userId) === JSON.stringify(req.id)) {
+              Dog.findOneAndUpdate(updateTarget, updateContent, {new:true})
+                .then( data => {
+                  sendJSON(res,data);
+                })
+              //   .catch(next);
+                .catch(next(404));
+            } else {
+              console.log('401 error');
+              next(401);
+            }
           } else {
-            next(401);
+            ////////////
+            console.log('dog = null else: error 404');
+            next(404);
+            ////////////
           }
         })
         // if you dont find one you should send 404
@@ -73,6 +87,11 @@ router.put('/api/v1/dogs/:id', auth, (req,res,next) => {
     } else {
       noId(res);
     }
+  } else {
+    //////////// no req.id
+    console.log('404 error');
+    next(404);
+    ////////////
   }
 });
 

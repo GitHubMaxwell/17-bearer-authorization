@@ -13,22 +13,24 @@ require('dotenv').config();
 
 let app = express();
 
-/////////////////////////// middleware
+/////////////////////////// express middleware
 app.use(cors());
 // app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
-/////////////////////////// routes and error handling middleware
+
+/////////////////////////// routes
 app.use(authRouter); // auth routes
 app.use(userRouter); // user routes
 
 
-app.use(badBearer); // 401
-app.use(notFound); // 404
-app.use(badBod); // 400
+/////////////////////////// error handling middleware
+app.use(badBearer); // 401 err
+app.use(notFound); // 404 err
+app.use(badBod); // 400 err
 app.use(errorHandler); // 555 //change back to 500
-/////////////////////////// server
 
+/////////////////////////// server
 let server = false;
 
 module.exports = {
